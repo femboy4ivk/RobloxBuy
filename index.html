@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROBLOX BUY — Покупка Робуксов</title>
+    <!-- Иконки FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #131b2e;
+            --card-border: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --accent-red: #ff3333;
+            --accent-green: #10b981;
+            --accent-color: #ff3333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 5px 0;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .support-email {
+            color: var(--text-muted);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .main-title-block {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .main-title-block h1 {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .main-title-block h1 span {
+            color: var(--accent-red);
+        }
+
+        .main-title-block p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 12px;
+            padding: 0 10px;
+        }
+
+        .center-gem-icon {
+            width: 36px; height: 36px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto;
+            color: #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.1);
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .section-title {
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            background: #0b0f19;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-red);
+        }
+
+        .total-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #0b0f19;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 25px;
+        }
+
+        @media(min-width: 500px) {
+            .total-box {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .total-info-sub {
+                text-align: right;
+            }
+        }
+
+        .total-price-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .total-price-text span {
+            color: var(--accent-red);
+            font-size: 26px;
+        }
+
+        .total-info-sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .buy-btn {
+            width: 100%;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .buy-btn:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 15px;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media(min-width: 450px) {
+            .modal-content {
+                padding: 30px;
+            }
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: none; border: none;
+            color: var(--text-muted);
+            font-size: 20px; cursor: pointer;
+            padding: 5px;
+        }
+
+        .transfer-box {
+            background: #0b0f19;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin: 12px 0;
+            text-align: left;
+        }
+
+        .rules-box {
+            background: #0b0f19;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            text-align: left;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .rules-box b {
+            color: var(--text-main);
+        }
+
+        #toast {
+            position: fixed; bottom: 20px; left: 15px; right: 15px;
+            max-width: 400px; margin: 0 auto;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: white; padding: 14px 18px; border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex; align-items: center; gap: 10px;
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.3s ease; z-index: 2000;
+        }
+
+        @media(min-width: 450px) {
+            #toast {
+                left: auto; right: 30px;
+            }
+        }
+
+        #toast.show {
+            transform: translateY(0); opacity: 1;
+        }
+
+        #toast i { color: var(--accent-green); font-size: 18px; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-shield-halved" style="color: #ff3333;"></i> ROBLOX BUY
+        </div>
+        <div class="header-actions">
+            <div class="support-email"><i class="fa-solid fa-envelope"></i> support@robloxbuy.ru</div>
+        </div>
+    </header>
+
+    <div class="main-title-block">
+        <h1>КУПИТЬ <span>ROBUX</span></h1>
+        <p>Магазин Robloxbuy — Покупать Robux дёшево и без комиссии!</p>
+        <div class="center-gem-icon">
+            <i class="fa-solid fa-gem"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section-title"><i class="fa-solid fa-user"></i> Ваш ник в Roblox</div>
+        <div class="input-group">
+            <i class="fa-solid fa-at input-icon"></i>
+            <input type="text" id="username" placeholder="Например: RobloxUser123">
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-coins"></i> Количество робуксов</div>
+        <div class="input-group">
+            <i class="fa-solid fa-gem input-icon"></i>
+            <input type="number" id="robux-amount" placeholder="От 50 до 100 000" oninput="calculatePrice()">
+        </div>
+
+        <div class="total-box">
+            <div class="total-price-text">Сумма к оплате: <span id="total-price">0</span> ₽</div>
+            <div class="total-info-sub">
+                Курс: 1 робукс = 0.70 ₽<br>
+                от 50 до 100 000 робуксов
+            </div>
+        </div>
+
+        <button class="buy-btn" onclick="openPaymentModal()">Купить робуксы</button>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1550462202673102911/KoBViHwM4F_WT7l_01m0aq-Yl08iDWTOJXSM6gdyTLG4FKCwQhE5Ls3zRaUxGt8oFr0f";
+        const ADMIN_DISCORD_ID = "1247200852645642331";
+
+        let baseCalculatedPrice = 0;
+        const PAYMENT_DETAILS = "2202208152650744";
+
+        function calculatePrice() {
+            let input = document.getElementById('robux-amount');
+            let val = parseInt(input.value);
+            let priceElement = document.getElementById('total-price');
+
+            if (isNaN(val) || val <= 0) {
+                baseCalculatedPrice = 0;
+                priceElement.innerText = "0";
+                return;
+            }
+
+            if (val > 100000) {
+                input.value = 100000;
+                val = 100000;
+            }
+
+            // Курс 0.70 рублей за 1 робукс
+            baseCalculatedPrice = val * 0.70;
+            priceElement.innerText = baseCalculatedPrice.toFixed(2);
+        }
+
+        function openPaymentModal() {
+            let usernameField = document.getElementById('username');
+            let amountField = document.getElementById('robux-amount');
+
+            if (!usernameField || !amountField) return;
+
+            let username = usernameField.value.trim();
+            let amount = amountField.value;
+
+            if (!username) {
+                showToast("Введите ваш ник в Roblox!");
+                return;
+            }
+            if (!amount || parseInt(amount) < 50) {
+                showToast("Минимум 50 робуксов!");
+                return;
+            }
+
+            let finalSum = baseCalculatedPrice.toFixed(2);
+
+            let oldModal = document.getElementById('paymentModal');
+            if (oldModal) oldModal.remove();
+
+            let modal = document.createElement('div');
+            modal.id = 'paymentModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="close-modal" onclick="closePaymentModal()">&times;</button>
+                    <h2 style="margin-bottom: 6px; font-size: 20px;">Перевод по карте</h2>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Без комиссии</p>
+                    
+                    <div class="transfer-box">
+                        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Переведите точную сумму на карту:</p>
+                        <b style="font-size: 15px; color: #38bdf8; user-select: all; letter-spacing: 1px; word-break: break-all;">${PAYMENT_DETAILS}</b>
+                        <p style="font-size: 10.5px; color: #f59e0b; margin-top: 6px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> <b>Важно:</b> Обязательно укажите ваш ник в комментарии: <b style="color:white;">${username}</b>
+                        </p>
+                    </div>
+
+                    <div class="rules-box">
+                        <p style="margin-bottom: 5px;"><i class="fa-solid fa-circle-exclamation" style="color: #38bdf8;"></i> <b>Правило группы:</b> Вы должны вступить в выбранную группу и подождать 2 недели перед переводом.</p>
+                        <p><i class="fa-solid fa-clock" style="color: #f59e0b;"></i> <b>Сроки:</b> Робуксы могут поступать с задержкой до нескольких часов, но обычно это занимает не более 2 минут. Если прошло более 24 часов — напишите нам.</p>
+                    </div>
+
+                    <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 15px; text-align: left; line-height: 1.4;">
+                        Ник: <b id="modal-user" style="color:white;">${username}</b> | Робуксы: <b id="modal-robux" style="color:white;">${amount}</b> 💎<br>
+                        Сумма к оплате: <b id="modal-final-price" style="color:#ff3333; font-size: 15px;">${finalSum}</b> ₽
+                    </p>
+
+                    <button class="buy-btn" onclick="confirmPayment()" style="padding: 12px; font-size: 14px;">Я оплатил, создать заказ</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function closePaymentModal() {
+            let modal = document.getElementById('paymentModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        // ОТПРАВКА ЗАКАЗА В DISCORD
+        async function confirmPayment() {
+            let username = document.getElementById('modal-user').innerText;
+            let amount = document.getElementById('modal-robux').innerText;
+            let price = document.getElementById('modal-final-price').innerText;
+            let dateStr = new Date().toLocaleString();
+
+            let pingText = ADMIN_DISCORD_ID ? `<@${ADMIN_DISCORD_ID}>` : "";
+
+            let discordPayload = {
+                content: `${pingText} **🚨 НОВЫЙ ЗАКАЗ РОБУКСОВ!**`,
+                embeds: [{
+                    title: "💳 Перевод по карте ожидает проверки",
+                    color: 16724736,
+                    fields: [
+                        { name: "👤 Ник в Roblox", value: `\`${username}\``, inline: true },
+                        { name: "💎 Количество", value: `\`${amount} робуксов\``, inline: true },
+                        { name: "💰 Сумма к оплате", value: `\`${price} ₽\``, inline: true },
+                        { name: "🕒 Время", value: dateStr, inline: false }
+                    ],
+                    footer: {
+                        text: "Roblox Buy Автоматическое уведомление"
+                    }
+                }]
+            };
+
+            try {
+                let response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(discordPayload)
+                });
+
+                if (response.ok) {
+                    showToast("Заказ успешно отправлен в Discord!");
+                    closePaymentModal();
+                } else {
+                    showToast("Ошибка отправки. Проверьте ссылку вебхука.");
+                }
+            } catch (e) {
+                console.error(e);
+                showToast("Ошибка сети при отправке в Discord.");
+            }
+        }
+
+        function showToast(text) {
+            let oldToast = document.getElementById('toast');
+            if (oldToast) oldToast.remove();
+
+            let toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-check"></i>
+                <span id="toast-text">${text}</span>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
