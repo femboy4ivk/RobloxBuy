@@ -1,660 +1,346 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROBLOX BUY — Покупка Робуксов</title>
-    <!-- Иконки FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RobloxBuy - Покупка Робуксов</title>
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: #131b2e;
-            --card-border: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #64748b;
-            --accent-red: #ff3333;
-            --accent-green: #10b981;
-            --accent-orange: #f59e0b;
-            --accent-blue: #3b82f6;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
         }
 
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px;
-        }
-
-        header {
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 5px 0;
-        }
-
-        .logo {
-            font-size: 18px;
-            font-weight: 900;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .support-email {
-            color: var(--text-muted);
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .admin-login-btn {
-            background: none;
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 6px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .admin-login-btn:hover {
-            color: white;
-            border-color: var(--accent-red);
-        }
-
-        .main-title-block {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .main-title-block h1 {
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .main-title-block h1 span {
-            color: var(--accent-red);
-        }
-
-        .main-title-block p {
-            color: var(--text-muted);
-            font-size: 13px;
-            margin-bottom: 12px;
-            padding: 0 10px;
-        }
-
-        .center-gem-icon {
-            width: 36px; height: 36px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto;
-            color: #fbbf24;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.1);
-            font-size: 14px;
         }
 
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 420px;
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .input-group {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .input-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 14px;
+        .header h1 {
+            font-size: 22px;
+            margin: 0;
         }
 
-        .input-group input {
+        .lock-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .lock-btn:hover {
+            color: var(--text);
+        }
+
+        .stock-info {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        input {
             width: 100%;
-            padding: 12px 14px 12px 42px;
-            background: #0b0f19;
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            color: white;
+            padding: 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
             font-size: 16px;
+            box-sizing: border-box;
             outline: none;
             transition: border-color 0.2s;
         }
 
-        .input-group input:focus {
-            border-color: var(--accent-red);
+        input:focus {
+            border-color: var(--accent);
         }
 
-        .total-box {
+        .price-display {
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background: #0b0f19;
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-            margin-bottom: 25px;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
         }
 
-        @media(min-width: 500px) {
-            .total-box {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-            .total-info-sub {
-                text-align: right;
-            }
-        }
-
-        .total-price-text {
-            font-size: 18px;
+        .price-value {
             font-weight: bold;
-        }
-
-        .total-price-text span {
-            color: var(--accent-red);
-            font-size: 26px;
-        }
-
-        .total-info-sub {
-            font-size: 11.5px;
-            color: var(--text-muted);
-            line-height: 1.4;
+            color: var(--success);
+            font-size: 18px;
         }
 
         .buy-btn {
             width: 100%;
-            background: var(--accent-red);
+            padding: 14px;
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: background 0.2s;
         }
 
         .buy-btn:hover {
-            opacity: 0.9;
+            background: var(--accent-hover);
         }
 
-        .stock-badge {
-            width: 100%;
-            max-width: 600px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        /* Модальные окна */
+        /* Модальное окно QR */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            padding: 15px;
-        }
-
-        .modal.show {
-            opacity: 1;
+            z-index: 100;
         }
 
         .modal-content {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 20px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 420px;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            text-align: center;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal.show .modal-content {
-            transform: translateY(0);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px; right: 15px;
-            background: none; border: none;
-            color: var(--text-muted);
-            font-size: 20px; cursor: pointer;
-            padding: 5px;
-        }
-
-        .qr-container {
-            background: #ffffff;
-            padding: 15px;
+            border: 1px solid var(--border);
+            padding: 24px;
             border-radius: 16px;
-            display: inline-block;
-            margin: 15px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 320px;
+            width: 100%;
         }
 
-        .qr-container img {
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .qr-img {
             width: 200px;
             height: 200px;
-            display: block;
-        }
-
-        /* Экран статуса заказа */
-        #status-card {
-            display: none;
-        }
-
-        .status-box {
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .status-icon-anim {
-            font-size: 48px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
             margin-bottom: 15px;
-            color: var(--accent-orange);
         }
 
-        .status-title {
-            font-size: 20px;
+        .close-btn {
+            background: var(--border);
+            color: var(--text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
             font-weight: bold;
-            margin-bottom: 8px;
+            width: 100%;
         }
-
-        .status-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.4;
+        .close-btn:hover {
+            background: #475569;
         }
-
-        .status-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-            text-align: left;
-            background: #0b0f19;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .step-item.active {
-            color: white;
-            font-weight: bold;
-        }
-
-        .step-item.active i {
-            color: var(--accent-green);
-        }
-
-        #toast {
-            position: fixed; bottom: 20px; left: 15px; right: 15px;
-            max-width: 400px; margin: 0 auto;
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            color: white; padding: 14px 18px; border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-            display: flex; align-items: center; gap: 10px;
-            transform: translateY(100px); opacity: 0;
-            transition: all 0.3s ease; z-index: 2000;
-        }
-
-        @media(min-width: 450px) {
-            #toast { left: auto; right: 30px; }
-        }
-
-        #toast.show {
-            transform: translateY(0); opacity: 1;
-        }
-
-        #toast i { color: var(--accent-green); font-size: 18px; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">
-            <i class="fa-solid fa-shield-halved" style="color: #ff3333;"></i> ROBLOX BUY
-        </div>
-        <div class="header-actions">
-            <div class="support-email"><i class="fa-solid fa-envelope"></i> support@robloxbuy.ru</div>
-            <button class="admin-login-btn" onclick="openAdminLogin()"><i class="fa-solid fa-lock"></i></button>
-        </div>
-    </header>
-
-    <main class="main-title-block">
-        <h1>КУПИТЬ <span>ROBUX</span></h1>
-        <p>Магазин Robloxbuy — Покупать Robux дёшево и просто!</p>
-        <div class="center-gem-icon">
-            <i class="fa-solid fa-gem"></i>
-        </div>
-    </main>
-
-    <!-- Основная форма заказа -->
-    <div class="container" id="order-form-container">
-        <div class="section-title"><i class="fa-solid fa-user"></i> Ваш ник в Roblox</div>
-        <div class="input-group">
-            <i class="fa-solid fa-at input-icon"></i>
-            <input type="text" id="username" placeholder="Например: RobloxUser123">
+    <div class="container">
+        <div class="header">
+            <h1>💎 RobloxBuy</h1>
+            <button class="lock-btn" onclick="openAdmin()" title="Админ-панель">🔒</button>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-coins"></i> Количество робуксов</div>
-        <div class="input-group">
-            <i class="fa-solid fa-gem input-icon"></i>
-            <input type="number" id="robux-amount" placeholder="Сколько хотите купить" oninput="calculatePrice()">
+        <div class="stock-info">
+            <span>В наличии:</span>
+            <strong id="stockCount">10000</strong> робуксов
         </div>
 
-        <div class="total-box">
-            <div class="total-price-text">Сумма к оплате: <span id="total-price">0</span> ₽</div>
-            <div class="total-info-sub">
-                Текущая ставка: 1 robux = 0.70 ₽<br>
-                Лимиты: от 50 до <span id="max-limit-text">102</span> робуксов
-            </div>
+        <div class="form-group">
+            <label for="username">Ваш ник в Roblox</label>
+            <input type="text" id="username" placeholder="Введите никнейм">
         </div>
 
-        <button class="buy-btn" onclick="openPaymentModal()">Оплатить по QR-коду</button>
+        <div class="form-group">
+            <label for="amount">Количество робуксов</label>
+            <input type="number" id="amount" placeholder="Введите количество" min="1" oninput="calculatePrice()">
+        </div>
+
+        <div class="price-display">
+            <span>К оплате:</span>
+            <span class="price-value" id="totalPrice">0 ₽</span>
+        </div>
+
+        <button class="buy-btn" onclick="checkout()">Купить</button>
     </div>
 
-    <!-- Экран отслеживания статуса заказа (появляется после нажатия «Я оплатил») -->
-    <div class="container" id="status-card">
-        <div class="status-box">
-            <div class="status-icon-anim" id="main-status-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-            <div class="status-title" id="main-status-title">Ожидание оплаты / Проверка</div>
-            <div class="status-desc" id="main-status-desc">Мы проверяем поступление средств по вашему платежу. Пожалуйста, ожидайте.</div>
-
-            <div class="status-steps">
-                <div class="step-item active" id="step-1"><i class="fa-solid fa-circle-check"></i> Заказ создан и ожидает проверки</div>
-                <div class="step-item" id="step-2"><i class="fa-solid fa-circle-notch" id="icon-2"></i> Заказ в работе (выдача робуксов)</div>
-                <div class="step-item" id="step-3"><i class="fa-solid fa-circle-notch" id="icon-3"></i> Заказ успешно выполнен</div>
-            </div>
-
-            <button class="buy-btn" style="background: var(--card-border); font-size: 14px; padding: 12px;" onclick="location.reload()">Сделать новый заказ</button>
+    <!-- Модальное окно оплаты по QR -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <h3>Оплата по СБП (QR)</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">Отсканируйте QR-код в приложении вашего банка</p>
+            <img id="qrImage" class="qr-img" src="" alt="QR Код">
+            <p id="qrAmountText" style="font-weight: bold; margin-bottom: 15px;"></p>
+            <button class="close-btn" onclick="confirmPayment()">Я оплатил</button>
         </div>
     </div>
-
-    <!-- Наличие -->
-    <div class="stock-badge">
-        <i class="fa-solid fa-box-archive"></i> В НАЛИЧИЕ <span id="stock-count-display" style="margin-left: 4px; margin-right: 4px;">102</span> РОБУКСА
-    </div>
-
-    <div id="toast"></div>
 
     <script>
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1550462202673102911/KoBViHwM4F_WT7l_01m0aq-Yl08iDWTOJXSM6gdyTLG4FKCwQhE5Ls3zRaUxGt8oFr0f";
-        const ADMIN_DISCORD_ID = "1247200852645642331";
-
-        let currentStock = localStorage.getItem('roblox_stock') ? parseInt(localStorage.getItem('roblox_stock')) : 102;
-        let baseCalculatedPrice = 0;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            updateStockUI();
-        });
-
-        function updateStockUI() {
-            document.getElementById('stock-count-display').innerText = currentStock;
-            document.getElementById('max-limit-text').innerText = currentStock;
-            let inputField = document.getElementById('robux-amount');
-            inputField.placeholder = `От 50 до ${currentStock}`;
+        const RATE = 0.70; // 1 Робукс = 0.70 ₽
+        
+        // Получение или инициализация склада
+        function getStock() {
+            let stock = localStorage.getItem('roblox_stock');
+            if (stock === null) {
+                stock = 10000;
+                localStorage.setItem('roblox_stock', stock);
+            }
+            return parseInt(stock);
         }
 
-        function openAdminLogin() {
-            let pass = prompt("Введите пароль администратора:");
-            if (pass === null) return;
-            
-            if (pass === "12345") {
-                let newStock = prompt(`Пароль верный!\nВведите новое количество робуксов в наличии:`, currentStock);
-                if (newStock !== null && !isNaN(newStock)) {
-                    currentStock = parseInt(newStock);
-                    localStorage.setItem('roblox_stock', currentStock);
-                    updateStockUI();
-                    showToast(`Баланс успешно обновлен: ${currentStock} робуксов!`);
-                }
-            } else {
-                alert("Неверный пароль!");
-            }
+        function updateStockDisplay() {
+            document.getElementById('stockCount').innerText = getStock();
         }
 
         function calculatePrice() {
-            let input = document.getElementById('robux-amount');
-            let val = parseInt(input.value);
-            let priceElement = document.getElementById('total-price');
-
-            if (isNaN(val) || val <= 0) {
-                baseCalculatedPrice = 0;
-                priceElement.innerText = "0";
-                return;
+            const amount = parseInt(document.getElementById('amount').value) || 0;
+            const stock = getStock();
+            
+            if (amount > stock) {
+                document.getElementById('amount').value = stock;
             }
-
-            if (val > currentStock) {
-                input.value = currentStock;
-                val = currentStock;
-            }
-
-            baseCalculatedPrice = val * 0.70;
-            priceElement.innerText = baseCalculatedPrice.toFixed(2);
+            
+            const currentAmount = parseInt(document.getElementById('amount').value) || 0;
+            const total = (currentAmount * RATE).toFixed(2);
+            document.getElementById('totalPrice').innerText = total + ' ₽';
         }
 
-        function openPaymentModal() {
-            let usernameField = document.getElementById('username');
-            let amountField = document.getElementById('robux-amount');
+        function openAdmin() {
+            const pass = prompt('Введите пароль администратора:');
+            if (pass === '12345') {
+                const newStock = prompt('Введите новый остаток робуксов на складе:', getStock());
+                if (newStock !== null && !isNaN(newStock)) {
+                    localStorage.setItem('roblox_stock', parseInt(newStock));
+                    updateStockDisplay();
+                    alert('Склад успешно обновлен!');
+                }
+            } else if (pass !== null) {
+                alert('Неверный пароль!');
+            }
+        }
 
-            if (!usernameField || !amountField) return;
+        let currentOrderData = {};
 
-            let username = usernameField.value.trim();
-            let amount = amountField.value;
+        function checkout() {
+            const username = document.getElementById('username').value.trim();
+            const amount = parseInt(document.getElementById('amount').value);
+            const stock = getStock();
 
             if (!username) {
-                showToast("Введите ваш ник в Roblox!");
+                alert('Пожалуйста, введите ваш ник в Roblox!');
                 return;
             }
-            if (!amount || parseInt(amount) < 50) {
-                showToast("Минимум 50 робуксов!");
+            if (!amount || amount <= 0) {
+                alert('Введите корректное количество робуксов!');
+                return;
+            }
+            if (amount > stock) {
+                alert('В наличии нет такого количества робуксов!');
                 return;
             }
 
-            let finalSum = baseCalculatedPrice.toFixed(2);
+            const price = (amount * RATE).toFixed(2);
+            currentOrderData = { username, amount, price };
 
-            let oldModal = document.getElementById('paymentModal');
-            if (oldModal) oldModal.remove();
+            // Генерация QR-кода СБП через официальный сервис НСПК (qr.nspk.ru)
+            // Здесь используется универсальная ссылка-заглушка СБП под ваш платеж
+            const sbpPayload = `https://qr.nspk.ru/AD10000G5J9V3K2R3L8N6O7P4Q1S0T9U?sum=${price}&cur=RUB`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(sbpPayload)}`;
 
-            let paymentLink = `https://qr.nspk.ru/AD1M0000000000000000000000000000?sum=${finalSum}&cur=RUB`;
-            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(paymentLink)}`;
-
-            let modal = document.createElement('div');
-            modal.id = 'paymentModal';
-            modal.className = 'modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <button class="close-modal" onclick="closePaymentModal()">&times;</button>
-                    <h2 style="margin-bottom: 5px; font-size: 20px;">Оплата по QR-коду (СБП)</h2>
-                    <p style="font-size: 12px; color: var(--text-muted);">Отсканируйте код через приложение банка</p>
-                    
-                    <div class="qr-container">
-                        <img src="${qrApiUrl}" alt="QR Код для оплаты">
-                    </div>
-
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                        Ник: <b id="modal-user" style="color:white;">${username}</b> | Робуксы: <b id="modal-robux" style="color:white;">${amount}</b> 💎<br>
-                        Сумма к оплате: <b id="modal-final-price" style="color:#ff3333; font-size: 16px;">${finalSum}</b> ₽
-                    </p>
-
-                    <button class="buy-btn" onclick="confirmPayment()" style="padding: 12px; font-size: 14px;">Я оплатил</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
+            document.getElementById('qrImage').src = qrApiUrl;
+            document.getElementById('qrAmountText').innerText = `Сумма: ${price} ₽`;
+            document.getElementById('qrModal').style.display = 'flex';
         }
 
-        function closePaymentModal() {
-            let modal = document.getElementById('paymentModal');
-            if (modal) {
-                modal.classList.remove('show');
-                setTimeout(() => modal.remove(), 300);
-            }
-        }
-
-        async function confirmPayment() {
-            let username = document.getElementById('modal-user').innerText;
-            let amount = document.getElementById('modal-robux').innerText;
-            let price = document.getElementById('modal-final-price').innerText;
-            let dateStr = new Date().toLocaleString();
-
-            let pingText = ADMIN_DISCORD_ID ? `<@${ADMIN_DISCORD_ID}>` : "";
-
-            // Discord сообщение с кнопками (компоненты действия)
-            let discordPayload = {
-                content: `${pingText} **🚨 НОВЫЙ ЗАКАЗ (ОПЛАТА ПО QR)! Требуется проверка платежа.**`,
-                embeds: [{
-                    title: "📱 Заказ ожидает подтверждения",
-                    color: 16724736,
-                    fields: [
-                        { name: "👤 Ник в Roblox", value: `\`${username}\``, inline: true },
-                        { name: "💎 Количество", value: `\`${amount} робуксов\``, inline: true },
-                        { name: "💰 Сумма", value: `\`${price} ₽\``, inline: true },
-                        { name: "🕒 Время", value: dateStr, inline: false },
-                        { name: "📌 Статус", value: "`Ожидает оплаты / Проверка`", inline: false }
-                    ],
-                    footer: { text: "Roblox Buy Система статусов" }
-                }],
-                components: [
-                    {
-                        type: 1,
-                        components: [
-                            {
-                                type: 2,
-                                style: 2, // Серый/Вторичный стиль или 1 (синий) / 3 (зеленый)
-                                label: "⚙️ В работу",
-                                custom_id: "status_work"
-                            },
-                            {
-                                type: 2,
-                                style: 3, // Зеленый стиль
-                                label: "✅ Готов",
-                                custom_id: "status_ready"
-                            }
-                        ]
-                    }
-                ]
-            };
-
-            try {
-                let response = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(discordPayload)
-                });
-
+        function confirmPayment() {
+            // Отправка данных на локальный сервер Python-бота
+            fetch('http://localhost:8080/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(currentOrderData)
+            })
+            .then(response => {
                 if (response.ok) {
-                    closePaymentModal();
-                    // Переключаем интерфейс у покупателя на экран статуса
-                    document.getElementById('order-form-container').style.display = 'none';
-                    document.getElementById('status-card').style.display = 'block';
-                    showToast("Заказ отправлен! Переход к отслеживанию статуса.");
+                    alert('Заказ успешно создан и отправлен администратору!');
                 } else {
-                    showToast("Ошибка отправки в Discord.");
+                    alert('Заказ оформлен, но бот не запущен локально.');
                 }
-            } catch (e) {
-                console.error(e);
-                showToast("Ошибка сети.");
-            }
+            })
+            .catch(() => {
+                alert('Заказ оформлен! Убедитесь, что бот (python bot.py) запущен на компьютере.');
+            });
+
+            // Уменьшаем склад локально
+            const stock = getStock();
+            const newStock = stock - currentOrderData.amount;
+            localStorage.setItem('roblox_stock', newStock > 0 ? newStock : 0);
+            
+            document.getElementById('qrModal').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('totalPrice').innerText = '0 ₽';
+            updateStockDisplay();
         }
 
-        function showToast(text) {
-            let oldToast = document.getElementById('toast');
-            if (oldToast) oldToast.remove();
-
-            let toast = document.createElement('div');
-            toast.id = 'toast';
-            toast.innerHTML = `
-                <i class="fa-solid fa-circle-check"></i>
-                <span id="toast-text">${text}</span>
-            `;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+        // Инициализация при загрузке страницы
+        updateStockDisplay();
     </script>
 </body>
 </html>
