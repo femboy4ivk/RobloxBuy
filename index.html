@@ -15,6 +15,8 @@
             --text-muted: #64748b;
             --accent-red: #ff3333;
             --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-blue: #3b82f6;
         }
 
         * {
@@ -305,6 +307,64 @@
             display: block;
         }
 
+        /* Экран статуса заказа */
+        #status-card {
+            display: none;
+        }
+
+        .status-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .status-icon-anim {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--accent-orange);
+        }
+
+        .status-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .status-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .status-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            background: #0b0f19;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .step-item.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .step-item.active i {
+            color: var(--accent-green);
+        }
+
         #toast {
             position: fixed; bottom: 20px; left: 15px; right: 15px;
             max-width: 400px; margin: 0 auto;
@@ -347,7 +407,8 @@
         </div>
     </main>
 
-    <div class="container">
+    <!-- Основная форма заказа -->
+    <div class="container" id="order-form-container">
         <div class="section-title"><i class="fa-solid fa-user"></i> Ваш ник в Roblox</div>
         <div class="input-group">
             <i class="fa-solid fa-at input-icon"></i>
@@ -371,6 +432,23 @@
         <button class="buy-btn" onclick="openPaymentModal()">Оплатить по QR-коду</button>
     </div>
 
+    <!-- Экран отслеживания статуса заказа (появляется после нажатия «Я оплатил») -->
+    <div class="container" id="status-card">
+        <div class="status-box">
+            <div class="status-icon-anim" id="main-status-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="status-title" id="main-status-title">Ожидание оплаты / Проверка</div>
+            <div class="status-desc" id="main-status-desc">Мы проверяем поступление средств по вашему платежу. Пожалуйста, ожидайте.</div>
+
+            <div class="status-steps">
+                <div class="step-item active" id="step-1"><i class="fa-solid fa-circle-check"></i> Заказ создан и ожидает проверки</div>
+                <div class="step-item" id="step-2"><i class="fa-solid fa-circle-notch" id="icon-2"></i> Заказ в работе (выдача робуксов)</div>
+                <div class="step-item" id="step-3"><i class="fa-solid fa-circle-notch" id="icon-3"></i> Заказ успешно выполнен</div>
+            </div>
+
+            <button class="buy-btn" style="background: var(--card-border); font-size: 14px; padding: 12px;" onclick="location.reload()">Сделать новый заказ</button>
+        </div>
+    </div>
+
     <!-- Наличие -->
     <div class="stock-badge">
         <i class="fa-solid fa-box-archive"></i> В НАЛИЧИЕ <span id="stock-count-display" style="margin-left: 4px; margin-right: 4px;">102</span> РОБУКСА
@@ -378,16 +456,13 @@
 
     <div id="toast"></div>
 
-    <!-- Скрипты сайта и админки -->
     <script>
         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1550462202673102911/KoBViHwM4F_WT7l_01m0aq-Yl08iDWTOJXSM6gdyTLG4FKCwQhE5Ls3zRaUxGt8oFr0f";
         const ADMIN_DISCORD_ID = "1247200852645642331";
 
-        // Загружаем количество робуксов из памяти браузера или ставим по умолчанию 102
         let currentStock = localStorage.getItem('roblox_stock') ? parseInt(localStorage.getItem('roblox_stock')) : 102;
         let baseCalculatedPrice = 0;
 
-        // Инициализация при запуске
         document.addEventListener("DOMContentLoaded", () => {
             updateStockUI();
         });
@@ -399,12 +474,10 @@
             inputField.placeholder = `От 50 до ${currentStock}`;
         }
 
-        // Панель входа для администратора (вас)
         function openAdminLogin() {
             let pass = prompt("Введите пароль администратора:");
             if (pass === null) return;
             
-            // Секретный пароль (можете поменять "12345" на свой)
             if (pass === "12345") {
                 let newStock = prompt(`Пароль верный!\nВведите новое количество робуксов в наличии:`, currentStock);
                 if (newStock !== null && !isNaN(newStock)) {
@@ -507,21 +580,40 @@
 
             let pingText = ADMIN_DISCORD_ID ? `<@${ADMIN_DISCORD_ID}>` : "";
 
+            // Discord сообщение с кнопками (компоненты действия)
             let discordPayload = {
-                content: `${pingText} **🚨 НОВЫЙ ЗАКАЗ (ОПЛАТА ПО QR)!**`,
+                content: `${pingText} **🚨 НОВЫЙ ЗАКАЗ (ОПЛАТА ПО QR)! Требуется проверка платежа.**`,
                 embeds: [{
-                    title: "📱 Оплата по QR-коду ожидает проверки",
+                    title: "📱 Заказ ожидает подтверждения",
                     color: 16724736,
                     fields: [
                         { name: "👤 Ник в Roblox", value: `\`${username}\``, inline: true },
                         { name: "💎 Количество", value: `\`${amount} робуксов\``, inline: true },
                         { name: "💰 Сумма", value: `\`${price} ₽\``, inline: true },
-                        { name: "🕒 Время", value: dateStr, inline: false }
+                        { name: "🕒 Время", value: dateStr, inline: false },
+                        { name: "📌 Статус", value: "`Ожидает оплаты / Проверка`", inline: false }
                     ],
-                    footer: {
-                        text: "Roblox Buy Автоматическое уведомление"
+                    footer: { text: "Roblox Buy Система статусов" }
+                }],
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 2,
+                                style: 2, // Серый/Вторичный стиль или 1 (синий) / 3 (зеленый)
+                                label: "⚙️ В работу",
+                                custom_id: "status_work"
+                            },
+                            {
+                                type: 2,
+                                style: 3, // Зеленый стиль
+                                label: "✅ Готов",
+                                custom_id: "status_ready"
+                            }
+                        ]
                     }
-                }]
+                ]
             };
 
             try {
@@ -532,8 +624,11 @@
                 });
 
                 if (response.ok) {
-                    showToast("Заказ отправлен! Ожидайте выдачи.");
                     closePaymentModal();
+                    // Переключаем интерфейс у покупателя на экран статуса
+                    document.getElementById('order-form-container').style.display = 'none';
+                    document.getElementById('status-card').style.display = 'block';
+                    showToast("Заказ отправлен! Переход к отслеживанию статуса.");
                 } else {
                     showToast("Ошибка отправки в Discord.");
                 }
