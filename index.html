@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RobloxBuy - Оплата заказа</title>
+    <title>RobloxBuy - Покупка Робъксов</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,7 +43,7 @@
             color: #b0b0b0;
             margin-bottom: 5px;
         }
-        input[type="text"] {
+        input[type="text"], input[type="number"] {
             width: 100%;
             padding: 10px;
             border-radius: 6px;
@@ -53,7 +53,7 @@
             font-size: 15px;
             box-sizing: border-box;
         }
-        input[type="text"]:focus {
+        input:focus {
             border-color: #4CAF50;
             outline: none;
         }
@@ -103,6 +103,13 @@
             font-size: 50px;
             margin-bottom: 15px;
         }
+        .price-info {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
         #error-msg {
             color: #ff5252;
             font-size: 13px;
@@ -114,18 +121,34 @@
 <body>
 
     <div class="card" id="app">
-        <!-- Шаг 1: Ввод имени, QR-код и кнопка оплаты -->
-        <div id="step-qr">
-            <h2>Оплата по QR-коду</h2>
-            <p>Укажите ваши данные и отсканируйте QR-код</p>
+        
+        <!-- Шаг 1: Ввод никнейма и количества робуксов -->
+        <div id="step-form">
+            <h2>Покупка Робъксов</h2>
+            <p>Введите свой ник и количество для расчета</p>
             
             <div class="input-group">
-                <label for="clientName">Имя покупателя (как в банке):</label>
-                <input type="text" id="clientName" placeholder="Например: Иван Иванов">
+                <label for="robloxNick">Ваш ник в Roblox:</label>
+                <input type="text" id="robloxNick" placeholder="Например: Player123">
             </div>
-            
-            <div id="error-msg">Пожалуйста, введите ваше имя!</div>
 
+            <div class="input-group">
+                <label for="robuxCount">Количество Робъксов:</label>
+                <input type="number" id="robuxCount" placeholder="100" min="1" oninput="calculatePrice()">
+            </div>
+
+            <div class="price-info" id="priceDisplay">К оплате: 0 руб.</div>
+
+            <div id="error-msg">Заполните все поля!</div>
+
+            <button class="btn" onclick="goToQR()">К оплате</button>
+        </div>
+
+        <!-- Шаг 2: Оплата по QR-коду (появляется после ввода данных) -->
+        <div id="step-qr" class="hidden">
+            <h2>Оплата по QR-коду</h2>
+            <p id="qr-subtitle">Отсканируйте код для перевода</p>
+            
             <div class="qr-box">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://yourapi-or-payment-link.ru" alt="QR Код">
             </div>
@@ -133,17 +156,17 @@
             <button class="btn" onclick="userPaid()">Я оплатил</button>
         </div>
 
-        <!-- Шаг 2: Ожидание оплаты -->
+        <!-- Шаг 3: Ожидание оплаты -->
         <div id="step-waiting" class="hidden">
             <div class="status-icon">⏳</div>
             <h2>Ждем оплату...</h2>
-            <p id="waiting-text">Проверяем платеж от покупателя...</p>
+            <p id="waiting-text">Проверяем платеж...</p>
             
             <button class="btn btn-work" onclick="setStatus('work')">В работе</button>
             <button class="btn btn-ready" onclick="setStatus('ready')">Готов</button>
         </div>
 
-        <!-- Шаг 3: Заказ в работе -->
+        <!-- Шаг 4: Заказ в работе -->
         <div id="step-work" class="hidden">
             <div class="status-icon">⚙️</div>
             <h2>Заказ в работе</h2>
@@ -151,7 +174,7 @@
             <button class="btn btn-ready" onclick="setStatus('ready')">Готов</button>
         </div>
 
-        <!-- Шаг 4: Заказ готов -->
+        <!-- Шаг 5: Заказ готов -->
         <div id="step-ready" class="hidden">
             <div class="status-icon">✅</div>
             <h2>Готово!</h2>
@@ -160,12 +183,22 @@
     </div>
 
     <script>
-        let savedClientName = "";
+        let clientNick = "";
+        let clientRobux = 0;
+        let clientPrice = 0;
+
+        // Автоматический расчет цены (например, 1 робукс = 1 рубль, можете изменить коэффициент)
+        function calculatePrice() {
+            const count = document.getElementById('robuxCount').value;
+            const rate = 1; // Коэффициент стоимости 1 робукса в рублях
+            clientPrice = count * rate;
+            document.getElementById('priceDisplay').innerText = `К оплате: ${clientPrice} руб.`;
+        }
 
         function sendWebhook(statusName) {
-            const webhookUrl = "ВАШ_ВЕБХУК_ССЫЛКА_СЮДА"; // Ссылка на ваш вебхук (при необходимости)
+            const webhookUrl = "ВАШ_ВЕБХУК_ССЫЛКА_СЮДА"; 
+            const message = `Ник: ${clientNick} | Робъксов: ${clientRobux} | Сумма: ${clientPrice} руб. | Статус: ${statusName}`;
             
-            const message = `Покупатель: ${savedClientName} | Статус: ${statusName}`;
             console.log("Отправка в вебхук: " + message);
             
             /*
@@ -177,23 +210,32 @@
             */
         }
 
-        function userPaid() {
-            const nameInput = document.getElementById('clientName');
+        function goToQR() {
+            const nickInput = document.getElementById('robloxNick');
+            const countInput = document.getElementById('robuxCount');
             const errorMsg = document.getElementById('error-msg');
-            
-            if (nameInput.value.trim() === "") {
+
+            if (nickInput.value.trim() === "" || countInput.value <= 0) {
                 errorMsg.style.display = "block";
                 return;
             }
-            
+
             errorMsg.style.display = "none";
-            savedClientName = nameInput.value.trim();
+            clientNick = nickInput.value.trim();
+            clientRobux = countInput.value;
 
-            // Меняем текст ожидания, выводя имя покупателя
-            document.getElementById('waiting-text').innerText = `Проверяем платеж от: ${savedClientName}`;
+            // Меняем текст на шаге оплаты
+            document.getElementById('qr-subtitle').innerText = `Сумма: ${clientPrice} руб. для ${clientNick}`;
 
+            // Переключаем экраны
+            document.getElementById('step-form').classList.add('hidden');
+            document.getElementById('step-qr').classList.remove('hidden');
+        }
+
+        function userPaid() {
             document.getElementById('step-qr').classList.add('hidden');
             document.getElementById('step-waiting').classList.remove('hidden');
+            document.getElementById('waiting-text').innerText = `Проверяем платеж от ${clientNick} на ${clientPrice} руб.`;
             
             sendWebhook("Ожидает подтверждения оплаты");
         }
