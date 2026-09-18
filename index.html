@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROBLOX BUY — Оплата по QR-коду</title>
+    <title>ROBLOX BUY — Покупка Робуксов</title>
     <!-- Иконки FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -67,6 +67,22 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .admin-login-btn {
+            background: none;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .admin-login-btn:hover {
+            color: white;
+            border-color: var(--accent-red);
         }
 
         .main-title-block {
@@ -228,7 +244,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Модальное окно с QR-кодом */
+        /* Модальные окна */
         .modal {
             display: none;
             position: fixed;
@@ -319,6 +335,7 @@
         </div>
         <div class="header-actions">
             <div class="support-email"><i class="fa-solid fa-envelope"></i> support@robloxbuy.ru</div>
+            <button class="admin-login-btn" onclick="openAdminLogin()"><i class="fa-solid fa-lock"></i></button>
         </div>
     </header>
 
@@ -340,14 +357,14 @@
         <div class="section-title"><i class="fa-solid fa-coins"></i> Количество робуксов</div>
         <div class="input-group">
             <i class="fa-solid fa-gem input-icon"></i>
-            <input type="number" id="robux-amount" placeholder="От 50 до 102" oninput="calculatePrice()">
+            <input type="number" id="robux-amount" placeholder="Сколько хотите купить" oninput="calculatePrice()">
         </div>
 
         <div class="total-box">
             <div class="total-price-text">Сумма к оплате: <span id="total-price">0</span> ₽</div>
             <div class="total-info-sub">
                 Текущая ставка: 1 robux = 0.70 ₽<br>
-                Лимиты: от 50 до 102 робуксов
+                Лимиты: от 50 до <span id="max-limit-text">102</span> робуксов
             </div>
         </div>
 
@@ -356,16 +373,50 @@
 
     <!-- Наличие -->
     <div class="stock-badge">
-        <i class="fa-solid fa-box-archive"></i> В НАЛИЧИЕ 102 РОБУКСА
+        <i class="fa-solid fa-box-archive"></i> В НАЛИЧИЕ <span id="stock-count-display" style="margin-left: 4px; margin-right: 4px;">102</span> РОБУКСА
     </div>
 
     <div id="toast"></div>
 
+    <!-- Скрипты сайта и админки -->
     <script>
         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1550462202673102911/KoBViHwM4F_WT7l_01m0aq-Yl08iDWTOJXSM6gdyTLG4FKCwQhE5Ls3zRaUxGt8oFr0f";
         const ADMIN_DISCORD_ID = "1247200852645642331";
 
+        // Загружаем количество робуксов из памяти браузера или ставим по умолчанию 102
+        let currentStock = localStorage.getItem('roblox_stock') ? parseInt(localStorage.getItem('roblox_stock')) : 102;
         let baseCalculatedPrice = 0;
+
+        // Инициализация при запуске
+        document.addEventListener("DOMContentLoaded", () => {
+            updateStockUI();
+        });
+
+        function updateStockUI() {
+            document.getElementById('stock-count-display').innerText = currentStock;
+            document.getElementById('max-limit-text').innerText = currentStock;
+            let inputField = document.getElementById('robux-amount');
+            inputField.placeholder = `От 50 до ${currentStock}`;
+        }
+
+        // Панель входа для администратора (вас)
+        function openAdminLogin() {
+            let pass = prompt("Введите пароль администратора:");
+            if (pass === null) return;
+            
+            // Секретный пароль (можете поменять "12345" на свой)
+            if (pass === "12345") {
+                let newStock = prompt(`Пароль верный!\nВведите новое количество робуксов в наличии:`, currentStock);
+                if (newStock !== null && !isNaN(newStock)) {
+                    currentStock = parseInt(newStock);
+                    localStorage.setItem('roblox_stock', currentStock);
+                    updateStockUI();
+                    showToast(`Баланс успешно обновлен: ${currentStock} робуксов!`);
+                }
+            } else {
+                alert("Неверный пароль!");
+            }
+        }
 
         function calculatePrice() {
             let input = document.getElementById('robux-amount');
@@ -378,9 +429,9 @@
                 return;
             }
 
-            if (val > 102) {
-                input.value = 102;
-                val = 102;
+            if (val > currentStock) {
+                input.value = currentStock;
+                val = currentStock;
             }
 
             baseCalculatedPrice = val * 0.70;
@@ -410,7 +461,6 @@
             let oldModal = document.getElementById('paymentModal');
             if (oldModal) oldModal.remove();
 
-            // Ссылка, зашитая в QR-код (можно заменить на вашу платежную ссылку СБП)
             let paymentLink = `https://qr.nspk.ru/AD1M0000000000000000000000000000?sum=${finalSum}&cur=RUB`;
             let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(paymentLink)}`;
 
